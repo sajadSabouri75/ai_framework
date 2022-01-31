@@ -1,0 +1,4 @@
+
+
+class AIFrameworkExceptions(Exception):
+    pass
