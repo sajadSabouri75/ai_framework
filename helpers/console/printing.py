@@ -15,5 +15,9 @@ class ConsoleHelper():
             print(f'{Fore.BLUE}</connections>{Fore.RESET}')
 
     @staticmethod
-    def print_exception(error_message):
-        print(f'{Fore.RED}AI-Framework ERROR> {error_message}{Fore.RESET}')
+    def print_warning(warning_message):
+        print(f'{Fore.YELLOW}<WARNING> {warning_message} </WARNING>{Fore.RESET}')
+
+    @staticmethod
+    def print_error(error_message):
+        print(f'{Fore.RED}<ERROR> {error_message} </ERROR>')

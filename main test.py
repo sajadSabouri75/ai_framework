@@ -1,12 +1,12 @@
-from shell import Shell
+from shell import AIShell
 from data.connect.connections_helpers import  ConnectionsTypes
 
 
 def run_test():
-    my_shell = Shell()
+    my_shell = AIShell()
     my_shell.generate_connection(
         connection_type=ConnectionsTypes.CSV,
-        csv_address='shell.py'
+        csv_address='test.csv'
     )
 
 

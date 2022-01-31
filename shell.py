@@ -3,7 +3,7 @@ from data.connect.connections import CSVConnection
 from data.connect.connections_helpers import  ConnectionsTypes
 
 
-class Shell:
+class AIShell:
     def __init__(self):
         self._generator = Generator()
         self._connections = []

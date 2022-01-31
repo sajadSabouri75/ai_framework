@@ -48,8 +48,10 @@ class CSVConnection(Connection):
 
         except excepts.NoCSVAddress:
             excepts.NoCSVAddress.evoke()
+
         except excepts.WrongCSVAddress:
             excepts.WrongCSVAddress.evoke()
+
         except excepts.NoCSVType:
             excepts.NoCSVType.evoke()
 
@@ -60,9 +62,9 @@ class CSVConnection(Connection):
         return os.path.isfile(self._csv_address)
 
     def check_csv_type(self):
-        return os.path.splitext(self._csv_address) == 'csv'
+        return os.path.splitext(self._csv_address)[1] == '.csv'
 
     def build_connection(self):
-        print('')
+        print('bulding...')
 
         super(CSVConnection, self).build_connection()
