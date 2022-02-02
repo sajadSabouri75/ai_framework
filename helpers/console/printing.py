@@ -8,11 +8,11 @@ class ConsoleHelper():
         print(f'>> {Fore.LIGHTBLUE_EX}AI Framework running{Fore.RESET}')
 
     @staticmethod
-    def define_connection(tag):
+    def define_connection(tag, connection_id):
         if tag == 'start':
-            print(f'{Fore.BLUE}<connections>{Fore.RESET}')
+            print(f'{Fore.BLUE}<connections_{connection_id}>{Fore.RESET}')
         elif tag == 'end':
-            print(f'{Fore.BLUE}</connections>{Fore.RESET}')
+            print(f'{Fore.BLUE}</connections_{connection_id}>{Fore.RESET}')
 
     @staticmethod
     def print_warning(warning_message):
@@ -21,3 +21,7 @@ class ConsoleHelper():
     @staticmethod
     def print_error(error_message):
         print(f'{Fore.RED}<ERROR> {error_message} </ERROR>')
+
+    @staticmethod
+    def confirm_connection(connection_id):
+        print(f'{Fore.GREEN}connection {connection_id} confirmed!{Fore.RESET}')

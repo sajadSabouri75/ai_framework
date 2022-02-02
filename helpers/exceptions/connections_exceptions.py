@@ -48,3 +48,51 @@ class NoCSVType(ConnectionException):
     def evoke():
         ConsoleHelper.print_error('The specified file is not CSV.')
         exit()
+
+
+class CSVEmpty(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('CSV file is empty!')
+        exit()
+
+class RelationalDBConnectionError(ConnectionException):
+    @staticmethod
+    def evoke(external_error):
+        ConsoleHelper.print_error(external_error)
+        exit()
+
+
+class NoRelationalDBUsername(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('The username for sql database connection is not defined!')
+        exit()
+
+
+class NoRelationalDBPassword(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('The password for sql database connection is not defined!')
+        exit()
+
+
+class NoRelationalDBServer(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No specific server is defined for sql database connection!')
+        exit()
+
+
+class NoRelationalDBDatabase(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No specific database is defined for sql database connection!')
+        exit()
+
+
+class NoMSSQLServerDriver(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No driver is defined fo SQL server connection!')
+        exit()
