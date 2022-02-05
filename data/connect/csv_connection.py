@@ -1,9 +1,10 @@
 import pandas.errors
-
+from helpers.console.printing import ConsoleHelper
 from data.connect.connections import Connection
 from helpers.exceptions import connections_exceptions as excepts
 import os
 import pandas as pd
+
 
 class CSVConnection(Connection):
     def __init__(self, **kwargs):
@@ -22,6 +23,8 @@ class CSVConnection(Connection):
                 raise excepts.NoCSVType
         except excepts.ConnectionException as e:
             e.evoke()
+        except:
+            excepts.VitalConnectionException().evoke()
         finally:
             pass
 
@@ -32,11 +35,13 @@ class CSVConnection(Connection):
         return os.path.splitext(self._csv_address)[1] == '.csv'
 
     def build_connection(self):
-        print('connection entries are confirmed! Trying to build the connection ...')
+        ConsoleHelper.print_internal_message('connection entries are confirmed! Trying to build the connection ...')
         try:
             pd.read_csv(self._csv_address)
-        except pandas.errors.EmptyDataError:
+        except pd.errors.EmptyDataError:
             excepts.CSVEmpty().evoke()
+        except:
+            excepts.VitalConnectionException().evoke()
         finally:
             pass
         super(CSVConnection, self).build_connection()

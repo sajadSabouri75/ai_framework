@@ -14,6 +14,8 @@ class Connection:
                 raise excepts.NoIDError
         except excepts.ConnectionException as e:
             e.evoke()
+        except:
+            excepts.VitalConnectionException().evoke()
         finally:
             pass
 

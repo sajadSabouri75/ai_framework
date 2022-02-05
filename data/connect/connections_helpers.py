@@ -6,3 +6,4 @@ class ConnectionsTypes(Enum):
     SQL_SERVER = 1
     MY_SQL = 2
     CSV = 3
+    REDIS = 4
