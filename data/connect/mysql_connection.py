@@ -24,7 +24,6 @@ class MYSQLConnection(SQLDatabaseConnection):
             excepts.VitalConnectionException().evoke()
 
     def build_connection(self):
-        ConsoleHelper.print_internal_message('connection entries are confirmed! Trying to build the connection ...')
         try:
             port_string = f';port={self._port}' if self._port is not None else ''
             self._connection_obj = pyodbc.connect(

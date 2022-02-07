@@ -35,7 +35,6 @@ class CSVConnection(Connection):
         return os.path.splitext(self._csv_address)[1] == '.csv'
 
     def build_connection(self):
-        ConsoleHelper.print_internal_message('connection entries are confirmed! Trying to build the connection ...')
         try:
             pd.read_csv(self._csv_address)
         except pd.errors.EmptyDataError:

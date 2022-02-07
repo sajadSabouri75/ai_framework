@@ -15,6 +15,32 @@ class TrivialConnectionException(ConnectionException):
         ConsoleHelper.print_warning('Some trivial process went wrong!')
 
 
+class NoConnectionType(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('Connection type must be defined. Use ConnectionTypes enumeration!')
+        exit()
+
+
+class NoValidConnectionType(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('Connection type is not included in ConnectionTypes enumeration!')
+        exit()
+
+
+class NoConnectionName(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_warning('Connection name is not defined. An automatic connection name would be generated!')
+
+
+class DuplicateConnectionName(ConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_warning('Connection name is duplicate! An automatic connection name would be generated!')
+
+
 class VitalConnectionException(ConnectionException):
     @staticmethod
     def evoke():
@@ -131,8 +157,15 @@ class NoNoSQLPort(VitalConnectionException):
         ConsoleHelper.print_error('No port is defined for database connection!')
         exit()
 
+
 class NoNoSQLPassword(VitalConnectionException):
     @staticmethod
     def evoke():
         ConsoleHelper.print_error('No Password is defined for database connection!')
         exit()
+
+
+class NoNoSQLDatabaseIndex(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No database index is defined!')

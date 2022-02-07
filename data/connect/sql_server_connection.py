@@ -21,7 +21,6 @@ class SQLServerConnection(SQLDatabaseConnection):
             excepts.VitalConnectionException().evoke()
 
     def build_connection(self):
-        ConsoleHelper.print_internal_message('connection entries are confirmed! Trying to build the connection ...')
         try:
             self._connection_obj = pyodbc.connect(
                 f'DRIVER={self._driver};' +
