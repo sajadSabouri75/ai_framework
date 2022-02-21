@@ -36,6 +36,7 @@ class CSVConnection(Connection):
 
     def build_connection(self):
         try:
+            self._connection_obj = self._csv_address
             pd.read_csv(self._csv_address)
         except pd.errors.EmptyDataError:
             excepts.CSVEmpty().evoke()
@@ -44,3 +45,6 @@ class CSVConnection(Connection):
         finally:
             pass
         super(CSVConnection, self).build_connection()
+
+    def get_csv_address(self):
+        return self._csv_address

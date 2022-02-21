@@ -48,3 +48,15 @@ class InvalidNameIDPair(GetException):
     def evoke():
         ConsoleHelper.print_error('Connection name and id do not pair!')
         exit()
+
+
+class RedundantCSVQuery(GetException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_warning('CSV files do not accept queries. Query ignored!')
+
+
+class NoGetQuery(GetException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No query is defined for data retrieval!')

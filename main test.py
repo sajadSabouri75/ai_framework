@@ -8,12 +8,13 @@ def test_generate_connection(shell):
         connection_type=ConnectionsTypes.REDIS,
         password='',
         host='localhost',
-        port='6379',
+        port='6380',
         database_index=0
     )
 
     shell.generate_connection(
         connection_type=ConnectionsTypes.CSV,
+        connection_name='csv',
         csv_address='test.csv'
     )
 
@@ -35,24 +36,31 @@ def test_generate_connection(shell):
     #     driver='ODBC Driver 17 for SQL Server',
     # )
 
-    # shell.generate_connection(
-    #     connection_type=ConnectionsTypes.REDIS,
-    #     password='',
-    #     host='localhost',
-    #     port='3679'
-    # )
-
 
 def test_get_data(shell):
-    shell.get_data(
-        connection_name='rds'
+    # shell.get_data(
+    #     connection_name='rds'
+    # )
+    data = shell.get_data(
+        connection_name='csv',
+        get_query='sdf'
     )
+    data = shell.get_data(
+        connection_name='rds',
+        get_query=[{'get': 'name'}, {'get': 'profession'}, {'set': ['age', 21]}]
+    )
+
+    return data
 
 
 def run_test():
-    my_shell = AIShell()
+    my_shell = AIShell(name='shell_01')
     test_generate_connection(my_shell)
-    test_get_data(my_shell)
+    last_data = test_get_data(my_shell)
+    print(last_data)
+
+    # calling it off
+    print('done!')
 
 
 if __name__ == '__main__':
