@@ -43,8 +43,11 @@ class DuplicateConnectionName(ConnectionException):
 
 class VitalConnectionException(ConnectionException):
     @staticmethod
-    def evoke():
+    def evoke(message = ''):
         ConsoleHelper.print_error('Some vital process went wrong!')
+        if message != '':
+            ConsoleHelper.print_error(message)
+
         exit()
 
 
@@ -62,6 +65,7 @@ class NoIDError(VitalConnectionException):
         exit()
 
 
+# CSV connection
 class NoCSVAddress(VitalConnectionException):
     @staticmethod
     def evoke():
@@ -86,8 +90,63 @@ class NoCSVType(VitalConnectionException):
 class CSVEmpty(VitalConnectionException):
     @staticmethod
     def evoke():
-        ConsoleHelper.print_error('CSV file is empty!')
+        ConsoleHelper.print_warning('CSV file is empty!')
+
+
+# Numpy connection
+class NoNumpyAddress(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No numpy file address provided!')
         exit()
+
+
+class WrongNumpyAddress(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('Numpy file address seems incorrect!')
+        exit()
+
+
+class NoNumpyType(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('The specified file is not numpy.')
+        exit()
+
+
+class NumpyEmpty(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_warning('Numpy file is empty!')
+
+
+# Pickle connection
+class NoPickleAddress(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('No pickle file address provided!')
+        exit()
+
+
+class WrongPickleAddress(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('Pickle file address seems incorrect!')
+        exit()
+
+
+class NoPickleType(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_error('The specified file is not pickle.')
+        exit()
+
+
+class PickleEmpty(VitalConnectionException):
+    @staticmethod
+    def evoke():
+        ConsoleHelper.print_warning('Pickle file is empty!')
 
 
 class RelationalDBConnectionError(VitalConnectionException):

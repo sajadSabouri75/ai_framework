@@ -7,3 +7,5 @@ class ConnectionsTypes(Enum):
     MY_SQL = 2
     CSV = 3
     REDIS = 4
+    NUMPY = 5
+    PICKLE = 6

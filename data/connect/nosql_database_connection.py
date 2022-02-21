@@ -20,5 +20,7 @@ class NoSQLDatabaseConnection(Connection):
                 raise excepts.NoNoSQLHost
         except excepts.ConnectionException as e:
             e.evoke()
+        except Exception as e:
+            excepts.VitalConnectionException().evoke(e)
         finally:
             pass

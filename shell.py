@@ -6,6 +6,8 @@ from data.connect.csv_connection import CSVConnection
 from data.connect.sql_server_connection import SQLServerConnection
 from data.connect.mysql_connection import MYSQLConnection
 from data.connect.redis_connection import RedisConnection
+from data.connect.numpy_connection import NumpyConnection
+from data.connect.pickle_connection import PickleConnection
 from data.connect.connections_helpers import ConnectionsTypes
 from data.access.get.csv_get import CSVGet
 from data.access.get.redis_get import RedisGet
@@ -42,6 +44,24 @@ class AIShell:
                     connection_type=connection_type,
                     connection_name=connection_name,
                     csv_address=kwargs['csv_address'] if 'csv_address' in kwargs else None
+                )
+            )
+        elif connection_type is ConnectionsTypes.NUMPY:
+            self._connections.append(
+                NumpyConnection(
+                    connection_id=connection_id,
+                    connection_type=connection_type,
+                    connection_name=connection_name,
+                    numpy_address=kwargs['numpy_address'] if 'numpy_address' in kwargs else None
+                )
+            )
+        elif connection_type is ConnectionsTypes.PICKLE:
+            self._connections.append(
+                PickleConnection(
+                    connection_id=connection_id,
+                    connection_type=connection_type,
+                    connection_name=connection_name,
+                    pickle_address=kwargs['pickle_address'] if 'pickle_address' in kwargs else None
                 )
             )
         elif connection_type is ConnectionsTypes.SQL_SERVER:

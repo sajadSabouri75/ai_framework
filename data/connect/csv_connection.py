@@ -40,8 +40,8 @@ class CSVConnection(Connection):
             pd.read_csv(self._csv_address)
         except pd.errors.EmptyDataError:
             excepts.CSVEmpty().evoke()
-        except:
-            excepts.VitalConnectionException().evoke()
+        except Exception as e:
+            excepts.VitalConnectionException().evoke(e)
         finally:
             pass
         super(CSVConnection, self).build_connection()

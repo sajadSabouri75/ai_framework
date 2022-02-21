@@ -36,6 +36,18 @@ def test_generate_connection(shell):
         port='3306'
     )
 
+    shell.generate_connection(
+        connection_name='my_np',
+        connection_type=ConnectionsTypes.NUMPY,
+        numpy_address='test.npy'
+    )
+
+    shell.generate_connection(
+        connection_name='my_pickle',
+        connection_type=ConnectionsTypes.PICKLE,
+        pickle_address='test.pkl'
+    )
+
 
 def test_get_data(shell):
     # shell.get_data(
@@ -51,7 +63,7 @@ def test_get_data(shell):
     )
     data = shell.get_data(
         connection_id=3,
-        get_query=['SELECT * from test_table']
+        get_query=['SELECT * FROM test_table']
     )
     return data
 

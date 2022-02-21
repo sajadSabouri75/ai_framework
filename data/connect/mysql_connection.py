@@ -33,8 +33,8 @@ class MYSQLConnection(SQLDatabaseConnection):
 
         except mysql.connector.Error as e:
             excepts.RelationalDBConnectionError().evoke(f"Pyodbc error code: {0} | error description: {e}!")
-        except:
-            excepts.VitalConnectionException().evoke()
+        except Exception as e:
+            excepts.VitalConnectionException().evoke(e)
         finally:
             pass
 

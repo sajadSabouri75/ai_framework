@@ -14,6 +14,8 @@ class MYSQLGet(Get):
 
     def apply_query(self, query):
         output = pd.read_sql(query, self._connection_obj)
+        ConsoleHelper.print_internal_message(f'query "{query}" is performed successfully!')
+
         if not output.empty:
             return output
         else:

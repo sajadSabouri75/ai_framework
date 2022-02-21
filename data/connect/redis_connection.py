@@ -37,6 +37,8 @@ class RedisConnection(NoSQLDatabaseConnection):
             e.evoke()
         except base_excepts.NoException as e:
             e.evoke()
+        except Exception as e:
+            excepts.VitalConnectionException().evoke(e)
         finally:
             pass
 

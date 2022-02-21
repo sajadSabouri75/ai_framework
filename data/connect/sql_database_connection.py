@@ -23,5 +23,7 @@ class SQLDatabaseConnection(Connection):
                 raise excepts.NoRelationalDBDatabase
         except excepts.ConnectionException as e:
             e.evoke()
+        except Exception as e:
+            excepts.VitalConnectionException().evoke(e)
         finally:
             pass
