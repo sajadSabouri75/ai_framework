@@ -135,7 +135,7 @@ class NoMSSQLServerDriver(VitalConnectionException):
     @staticmethod
     def evoke():
         ConsoleHelper.print_error('No driver is defined fo SQL server connection!')
-        exit()
+        # exit()
 
 
 class NoSQLDBConnectionError(VitalConnectionException):

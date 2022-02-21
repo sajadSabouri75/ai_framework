@@ -29,7 +29,7 @@ class SQLServerConnection(SQLDatabaseConnection):
                 f'UID={self._username};' +
                 f'PWD={self._password}'
                 # autocommit=True -> I don't know what this does. Needs to be checked.
-            ).cursor()
+            )
         except pyodbc.Error as e:
             excepts.RelationalDBConnectionError().evoke(f"Pyodbc error code: {e.args[0]} | error description: {e.args[1]}!")
         except:

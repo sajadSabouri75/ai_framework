@@ -9,6 +9,8 @@ from data.connect.redis_connection import RedisConnection
 from data.connect.connections_helpers import ConnectionsTypes
 from data.access.get.csv_get import CSVGet
 from data.access.get.redis_get import RedisGet
+from data.access.get.sql_server_get import SQLServerGet
+from data.access.get.mysql_get import MYSQLGet
 
 
 class AIShell:
@@ -157,6 +159,14 @@ class AIShell:
             elif connection_type == ConnectionsTypes.REDIS:
                 self._access_objs.append(
                     RedisGet(connection.get_connection_obj())
+                )
+            elif connection_type == ConnectionsTypes.SQL_SERVER:
+                self._access_objs.append(
+                    SQLServerGet(connection.get_connection_obj())
+                )
+            elif connection_type == ConnectionsTypes.MY_SQL:
+                self._access_objs.append(
+                    MYSQLGet(connection.get_connection_obj())
                 )
             else:
                 was_successful = False

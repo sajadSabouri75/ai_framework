@@ -27,14 +27,14 @@ def test_generate_connection(shell):
     #     driver='ODBC Driver 17 for SQL Server',
     # )
 
-    # shell.generate_connection(
-    #     connection_type=ConnectionsTypes.MY_SQL,
-    #     username='admin',
-    #     password='1234',
-    #     server='180.0.0.100',
-    #     database='my_database',
-    #     driver='ODBC Driver 17 for SQL Server',
-    # )
+    shell.generate_connection(
+        connection_type=ConnectionsTypes.MY_SQL,
+        username='sajad',
+        password='ss2556',
+        server='localhost', # 99.88.70.54
+        database='test_for_ai',
+        port='3306'
+    )
 
 
 def test_get_data(shell):
@@ -49,7 +49,10 @@ def test_get_data(shell):
         connection_name='rds',
         get_query=[{'get': 'name'}, {'get': 'profession'}, {'set': ['age', 21]}]
     )
-
+    data = shell.get_data(
+        connection_id=3,
+        get_query=['SELECT * from test_table']
+    )
     return data
 
 
