@@ -1,5 +1,6 @@
 from shell import AIShell
 from data.connect.connections_helpers import ConnectionsTypes
+from data.access.frame.frame_helpers import ConversionTypes
 from shell_helpers import TelegramLogTypes
 
 
@@ -40,7 +41,7 @@ def test_generate_connection(shell):
     shell.generate_connection(
         connection_name='my_np',
         connection_type=ConnectionsTypes.NUMPY,
-        numpy_address='all_ttest_N_B_filter.npy'
+        numpy_address='test.npy'
     )
 
     # shell.generate_connection(
@@ -52,50 +53,59 @@ def test_generate_connection(shell):
 
 def test_get_data(shell):
     data = []
+
     data.append(
         shell.get_data(
             connection_name='csv',
             get_query='sdf'
         )
     )
-    data.append(
-        shell.get_data(
-            connection_name='rds',
-            get_query=[{'get': 'name'}, {'get': 'profession'}, {'set': ['age', 21]}, {'get': 'blahblah'}]
-        )
-    )
-    data.append(
-        shell.get_data(
-            connection_id=3,
-            get_query=['SELECT * FROM test_table']
-        )
-    )
-    data.append(
-        shell.get_data(
-            connection_name='rds',
-            get_query=[{'get': 'name'}, {'get': 'profession'}, {'set': ['age', 21]}]
-        )
-    )
+    # data.append(
+    #     shell.get_data(
+    #         connection_name='rds',
+    #         get_query=[{'get': 'name'}, {'get': 'profession'}, {'set': ['age', 21]}, {'get': 'blahblah'}]
+    #     )
+    # )
+    # data.append(
+    #     shell.get_data(
+    #         connection_id=3,
+    #         get_query=['SELECT * FROM test_table']
+    #     )
+    # )
+    # data.append(
+    #     shell.get_data(
+    #         connection_name='rds',
+    #         get_query=[{'get': 'name'}, {'get': 'profession'}, {'set': ['age', 21]}]
+    #     )
+    # )
     return data
 
 
 def test_frame_data(shell, data_cache):
+    framed_data = []
     for datum in data_cache:
-        shell.frame_data(
-            datum
+        framed_data.append(
+            shell.frame_data(
+                datum,
+                ConversionTypes.Spark_Dataframe
+            )
         )
+    return framed_data
 
 
 def run_test():
     print('> Generating AI shell ...')
     my_shell = AIShell(
         name='shell_01',
-        log_events=False,
+        log_events=True,
     )
-    my_shell.set_telegram_logger(
-        chat_ids=['1', '2'],
-        mode=TelegramLogTypes.Telegram_Lite
-    )
+
+    # my_shell.set_telegram_logger(
+    #     chat_ids=['1', '2'],
+    #     mode=TelegramLogTypes.Telegram_Lite
+    # )
+
+    my_shell.set_python_logger()
 
     # connection generation
     print('> Generating connection ...')
@@ -112,7 +122,7 @@ def run_test():
 
     # framing data
     print('> Framing data')
-    test_frame_data(my_shell, data_cache[2])
+    framed_data = test_frame_data(my_shell, data_cache)
 
     # calling it off
     print('done!')

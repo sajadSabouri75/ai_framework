@@ -1,4 +1,7 @@
+import pandas.core.frame
+
 from shell_helpers import TelegramLogTypes
+from data.access.frame.frame_helpers import ConversionTypes
 from helpers.generators.generators import Generator
 from helpers.logging.console_broadcast import ConsoleBroadcast
 from helpers.logging.telegram_bot_broadcast import TelegramBotBroadcast
@@ -16,7 +19,7 @@ from data.access.get.csv_get import CSVGet
 from data.access.get.redis_get import RedisGet
 from data.access.get.sql_server_get import SQLServerGet
 from data.access.get.mysql_get import MYSQLGet
-
+from data.access.frame.pandas_to_rdd_frame import PandasRDDFrame
 
 class AIShell:
     def __init__(self, **kwargs):
@@ -36,16 +39,15 @@ class AIShell:
     def set_telegram_logger(self, **kwargs):
         chat_ids = kwargs['chat_ids'] if 'chat_ids' in kwargs else None
         mode = kwargs['mode'] if 'mode' in kwargs else TelegramLogTypes.Telegram_Lite
-        self._loggers.append(
-            TelegramBotBroadcast(
-                chat_ids,
-                mode
-            )
-        )
+        self._loggers.append(TelegramBotBroadcast(chat_ids=chat_ids, mode=mode))
+
+    def set_python_logger(self):
+        pass
 
     # Connection generation
     def generate_connection(self, **kwargs):
-        self._logger.define_connection('start')
+        for logger in self._loggers:
+            logger.define_connection('start')
 
         was_successful = True
         connection_type = kwargs['connection_type'] if 'connection_type' in kwargs else None
@@ -128,9 +130,12 @@ class AIShell:
             self._connections_ids.append(connection_id)
             self._connections_names.append(connection_name)
             self._connection_to_access_dict[connection_id] = None
-            self._logger.print_internal_message(f'connection [{connection_name}] entries are confirmed! Trying to build the connection ...')
+            for logger in self._loggers:
+                logger.print_internal_message(f'connection [{connection_name}] entries are confirmed! Trying to build the connection ...')
+
             self._connections[-1].build_connection()
-            self._logger.define_connection('end')
+            for logger in self._loggers:
+                logger.define_connection('end')
 
     def generate_auto_connection_name(self):
         return f'connection_{self._generator.get_connection_counter()+1}'
@@ -259,7 +264,13 @@ class AIShell:
         return get_query
 
     # Framing data
-    def frame_data(self, data, subject_type='pandas'):
-        object_data_type = type(data)
+    def frame_data(self, data, subject_type=ConversionTypes.Pandas_Dataframe):
+        if isinstance(data, pandas.core.frame.DataFrame):
+            convertor = PandasRDDFrame(
+                object_type=type(data),
+                subject_type=subject_type,
+                pandas=data
+            )
+            return convertor.frame()
 
-        print()
+
