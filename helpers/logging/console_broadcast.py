@@ -1,7 +1,7 @@
 from colorama import Fore
 
 
-class ConsoleHelper():
+class ConsoleBroadcast:
 
     @staticmethod
     def define_framework():
@@ -24,7 +24,7 @@ class ConsoleHelper():
 
     @staticmethod
     def confirm_connection(connection_id, connection_name):
-        print(f'<confirmation> {Fore.LIGHTGREEN_EX}connection {connection_id} [{connection_name}] confirmed!{Fore.RESET} </confirmation>')
+        print(f'<confirmation> {Fore.LIGHTGREEN_EX}connection [{connection_id}:{connection_name}] confirmed!{Fore.RESET} </confirmation>')
 
     @staticmethod
     def print_internal_message(message):
@@ -36,3 +36,14 @@ class ConsoleHelper():
             print(f'{Fore.BLUE}<get>{Fore.RESET}')
         elif tag == 'end':
             print(f'{Fore.BLUE}</get>{Fore.RESET}')
+
+    @staticmethod
+    def confirm_data_cache(connection_id, connection_name):
+        print(
+            f'<data_cache> '
+            f'{Fore.LIGHTGREEN_EX}data from connection [{connection_id}:{connection_name}] cached!{Fore.RESET} '
+            f'</data_cache>'
+        )
+
+
+

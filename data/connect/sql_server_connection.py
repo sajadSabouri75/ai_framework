@@ -1,6 +1,5 @@
 from data.connect.sql_database_connection import SQLDatabaseConnection
 from helpers.exceptions import connections_exceptions as excepts
-from helpers.console.printing import ConsoleHelper
 import pyodbc
 
 

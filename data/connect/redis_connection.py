@@ -1,7 +1,6 @@
 from data.connect.nosql_database_connection import NoSQLDatabaseConnection
 from helpers.exceptions import base_exceptions as base_excepts
 from helpers.exceptions import connections_exceptions as excepts
-from helpers.console.printing import ConsoleHelper
 import redis
 
 

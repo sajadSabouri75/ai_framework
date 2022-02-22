@@ -1,5 +1,5 @@
 from helpers.exceptions import connections_exceptions as excepts
-from helpers.console.printing import ConsoleHelper
+from helpers.logging.console_broadcast import ConsoleBroadcast
 
 
 class Connection:
@@ -21,7 +21,7 @@ class Connection:
             pass
 
     def build_connection(self):
-        ConsoleHelper.confirm_connection(self._connection_id, self._connection_name)
+        ConsoleBroadcast.confirm_connection(self._connection_id, self._connection_name)
 
     def get_id(self):
         return self._connection_id

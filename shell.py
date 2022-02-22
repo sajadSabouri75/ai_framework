@@ -1,5 +1,8 @@
+from shell_helpers import TelegramLogTypes
 from helpers.generators.generators import Generator
-from helpers.console.printing import ConsoleHelper
+from helpers.logging.console_broadcast import ConsoleBroadcast
+from helpers.logging.telegram_bot_broadcast import TelegramBotBroadcast
+from helpers.logging.null_broadcast import NullBroadcast
 from helpers.exceptions import connections_exceptions as connection_excepts
 from helpers.exceptions import get_exceptions as get_excepts
 from data.connect.csv_connection import CSVConnection
@@ -18,6 +21,9 @@ from data.access.get.mysql_get import MYSQLGet
 class AIShell:
     def __init__(self, **kwargs):
         self._name = kwargs['name'] if 'name' in kwargs else 'unknown'
+        self._log_events = kwargs['log_events'] if 'log_events' in kwargs else True
+        self._loggers = [ConsoleBroadcast if self._log_events else NullBroadcast]
+
         self._generator = Generator()
         self._connections = []
         self._connections_ids = []
@@ -27,9 +33,19 @@ class AIShell:
         self._access_objs = []
         self._connection_to_access_dict = {}
 
+    def set_telegram_logger(self, **kwargs):
+        chat_ids = kwargs['chat_ids'] if 'chat_ids' in kwargs else None
+        mode = kwargs['mode'] if 'mode' in kwargs else TelegramLogTypes.Telegram_Lite
+        self._loggers.append(
+            TelegramBotBroadcast(
+                chat_ids,
+                mode
+            )
+        )
+
     # Connection generation
     def generate_connection(self, **kwargs):
-        ConsoleHelper.define_connection('start')
+        self._logger.define_connection('start')
 
         was_successful = True
         connection_type = kwargs['connection_type'] if 'connection_type' in kwargs else None
@@ -112,9 +128,9 @@ class AIShell:
             self._connections_ids.append(connection_id)
             self._connections_names.append(connection_name)
             self._connection_to_access_dict[connection_id] = None
-            ConsoleHelper.print_internal_message(f'connection [{connection_name}] entries are confirmed! Trying to build the connection ...')
+            self._logger.print_internal_message(f'connection [{connection_name}] entries are confirmed! Trying to build the connection ...')
             self._connections[-1].build_connection()
-            ConsoleHelper.define_connection('end')
+            self._logger.define_connection('end')
 
     def generate_auto_connection_name(self):
         return f'connection_{self._generator.get_connection_counter()+1}'
@@ -142,7 +158,9 @@ class AIShell:
 
     # Getting data
     def get_data(self, **kwargs):
-        ConsoleHelper.define_get('start')
+        for logger in self._loggers:
+            logger.define_get('start')
+
         connection_name = kwargs['connection_name'] if 'connection_name' in kwargs else None
         connection_id = kwargs['connection_id'] if 'connection_id' in kwargs else None
         get_query = kwargs['get_query'] if 'get_query' in kwargs else None
@@ -155,13 +173,11 @@ class AIShell:
 
         current_cache = self.get_data_from_access_obj(connection, get_query)
 
-        ConsoleHelper.print_internal_message(
-            f'access to connection [{connection_name}] is successfully done.'
-        )
-        ConsoleHelper.print_internal_message(
-            f'connection [{connection_name}] data cached.'
-        )
-        ConsoleHelper.define_get('end')
+        for logger in self._loggers:
+            logger.confirm_data_cache(connection_id, connection_name)
+
+        for logger in self._loggers:
+            logger.define_get('end')
 
         return current_cache
 
@@ -241,3 +257,9 @@ class AIShell:
             e.evoke()
 
         return get_query
+
+    # Framing data
+    def frame_data(self, data, subject_type='pandas'):
+        object_data_type = type(data)
+
+        print()

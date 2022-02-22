@@ -1,5 +1,6 @@
 from data.access.get.get import Get
-from helpers.console.printing import ConsoleHelper
+from helpers.exceptions import get_exceptions as excepts
+from helpers.logging.console_broadcast import ConsoleBroadcast
 
 
 class RedisGet(Get):
@@ -14,10 +15,22 @@ class RedisGet(Get):
         key = list(query.keys())[0]
         values = list(query.values())[0]
         if str(key).lower() == 'get':
-            output = self._connection_obj.get(str(values))
-            ConsoleHelper.print_internal_message(f'value of {values} is accessed successfully!')
-            return output
+            try:
+                output = self._connection_obj.get(str(values))
+                ConsoleBroadcast.print_internal_message(f'value of {values} is accessed successfully!')
+                if output is None:
+                    raise excepts.EmptyQueryResult
+            except excepts.EmptyQueryResult as e:
+                e.evoke(query)
+            except Exception as e:
+                excepts.VitalGetException.evoke(e)
+
+            if output is not None:
+                return output
+            else:
+                return None
+
         if str(key).lower() == 'set':
             self._connection_obj.set(str(values[0]), str(values[1]))
-            ConsoleHelper.print_internal_message(f'value of {values[0]} is set successfully!')
+            ConsoleBroadcast.print_internal_message(f'value of {values[0]} is set successfully!')
             return None
