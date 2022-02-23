@@ -3,228 +3,255 @@ from helpers.logging.console_broadcast import ConsoleBroadcast
 
 
 class ConnectionException(AIFrameworkExceptions):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error("Something went wrong with this connection, don't know what!")
-        exit()  # default behavior is vital error (no fault tolerance)
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error("Something went wrong with this connection, don't know what!")
+            logger.flush()
+        exit()  # default behavior is vital error (zero fault tolerance)
 
 
 class TrivialConnectionException(ConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Some trivial process went wrong!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Some trivial process went wrong!')
 
 
 class VitalConnectionException(ConnectionException):
-    @staticmethod
-    def evoke(message=''):
-        ConsoleBroadcast.print_error('Some vital process went wrong!')
-        if message != '':
-            ConsoleBroadcast.print_error(message)
+    def evoke(self, message=''):
+        for logger in self._loggers:
+            logger.print_error('Some vital process went wrong!')
+            if message != '':
+                logger.print_error(message)
+            logger.flush()
 
         exit()
 
 
 class NoConnectionType(ConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Connection type must be defined. Use ConnectionTypes enumeration!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Connection type must be defined. Use ConnectionTypes enumeration!')
+            logger.flush()
+
         exit()
 
 
 class NoValidConnectionType(ConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Connection type is not included in ConnectionTypes enumeration!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Connection type is not included in ConnectionTypes enumeration!')
+            logger.flush()
+
         exit()
 
 
 class NoConnectionName(ConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Connection name is not defined. An automatic connection name would be generated!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Connection name is not defined. An automatic connection name would be generated!')
 
 
 class DuplicateConnectionName(ConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Connection name is duplicate! An automatic connection name would be generated!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Connection name is duplicate! An automatic connection name would be generated!')
 
 
-class NoTypeError(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No connection type defined!')
+class NoTypeError(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No connection type defined!')
+            logger.flush()
         exit()
 
 
-class NoIDError(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No valid ID for this connection!')
+class NoIDError(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No valid ID for this connection!')
+            logger.flush()
+
         exit()
 
 
 # CSV connection
-class NoCSVAddress(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No CSV file address provided!')
+class NoCSVAddress(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No CSV file address provided!')
+            logger.flush()
         exit()
 
 
-class WrongCSVAddress(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('CSV file address seems incorrect!')
+class WrongCSVAddress(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('CSV file address seems incorrect!')
+            logger.flush()
         exit()
 
 
-class NoCSVType(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('The specified file is not CSV.')
+class NoCSVType(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('The specified file is not CSV.')
+            logger.flush()
         exit()
 
 
-class CSVEmpty(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('CSV file is empty!')
+class CSVEmpty(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('CSV file is empty!')
 
 
 # Numpy connection
-class NoNumpyAddress(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No numpy file address provided!')
+class NoNumpyAddress(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No numpy file address provided!')
+            logger.flush()
         exit()
 
 
-class WrongNumpyAddress(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Numpy file address seems incorrect!')
+class WrongNumpyAddress(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Numpy file address seems incorrect!')
+            logger.flush()
         exit()
 
 
-class NoNumpyType(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('The specified file is not numpy.')
+class NoNumpyType(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('The specified file is not numpy.')
+            logger.flush()
         exit()
 
 
-class NumpyEmpty(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Numpy file is empty!')
+class NumpyEmpty(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Numpy file is empty!')
 
 
 # Pickle connection
-class NoPickleAddress(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No pickle file address provided!')
+class NoPickleAddress(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No pickle file address provided!')
+            logger.flush()
         exit()
 
 
-class WrongPickleAddress(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Pickle file address seems incorrect!')
+class WrongPickleAddress(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Pickle file address seems incorrect!')
+            logger.flush()
         exit()
 
 
-class NoPickleType(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('The specified file is not pickle.')
+class NoPickleType(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('The specified file is not pickle.')
+            logger.flush()
         exit()
 
 
-class PickleEmpty(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Pickle file is empty!')
+class PickleEmpty(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Pickle file is empty!')
 
 
-class RelationalDBConnectionError(VitalConnectionException):
-    @staticmethod
-    def evoke(external_error):
-        ConsoleBroadcast.print_error(external_error)
+class RelationalDBConnectionError(ConnectionException):
+    def evoke(self, external_error):
+        for logger in self._loggers:
+            logger.print_error(external_error)
+            logger.flush()
         exit()
 
 
-class NoRelationalDBPort(TrivialConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Port is not specified. Most of the times the default port is OK!')
+class NoRelationalDBPort(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Port is not specified. Most of the times the default port is OK!')
 
 
-class NoRelationalDBUsername(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('The username for sql database connection is not defined!')
+class NoRelationalDBUsername(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('The username for sql database connection is not defined!')
+            logger.flush()
         exit()
 
 
-class NoRelationalDBPassword(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('The password for sql database connection is not defined!')
+class NoRelationalDBPassword(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('The password for sql database connection is not defined!')
+            logger.flush()
         exit()
 
 
-class NoRelationalDBServer(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No specific server is defined for sql database connection!')
+class NoRelationalDBServer(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No specific server is defined for sql database connection!')
+            logger.flush()
         exit()
 
 
-class NoRelationalDBDatabase(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No specific database is defined for sql database connection!')
+class NoRelationalDBDatabase(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No specific database is defined for sql database connection!')
+            logger.flush()
         exit()
 
 
-class NoMSSQLServerDriver(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No driver is defined fo SQL server connection!')
-        # exit()
-
-
-class NoSQLDBConnectionError(VitalConnectionException):
-    @staticmethod
-    def evoke(external_error):
-        ConsoleBroadcast.print_error(external_error)
+class NoMSSQLServerDriver(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No driver is defined fo SQL server connection!')
+            logger.flush()
         exit()
 
 
-class NoNoSQLHost(TrivialConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('No host is defined for database connection! Set to default host "localhost"')
-
-
-class NoNoSQLPort(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No port is defined for database connection!')
+class NoSQLDBConnectionError(ConnectionException):
+    def evoke(self, external_error):
+        for logger in self._loggers:
+            logger.print_error(external_error)
+            logger.flush()
         exit()
 
 
-class NoNoSQLPassword(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No Password is defined for database connection!')
+class NoNoSQLHost(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('No host is defined for database connection! Set to default host "localhost"')
+
+
+class NoNoSQLPort(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No port is defined for database connection!')
+            logger.flush()
         exit()
 
 
-class NoNoSQLDatabaseIndex(VitalConnectionException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No database index is defined!')
+class NoNoSQLPassword(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No Password is defined for database connection!')
+            logger.flush()
+        exit()
+
+
+class NoNoSQLDatabaseIndex(ConnectionException):
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No database index is defined!')

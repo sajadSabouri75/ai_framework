@@ -2,6 +2,7 @@ from shell import AIShell
 from data.connect.connections_helpers import ConnectionsTypes
 from data.access.frame.frame_helpers import ConversionTypes
 from shell_helpers import TelegramLogTypes
+import pickle
 
 
 def test_generate_connection(shell):
@@ -10,7 +11,7 @@ def test_generate_connection(shell):
         connection_type=ConnectionsTypes.REDIS,
         password='',
         host='localhost',
-        port='6380',
+        port='6370',
         database_index=0
     )
 
@@ -19,15 +20,6 @@ def test_generate_connection(shell):
         connection_name='csv',
         csv_address='btc_15m_01.csv'
     )
-
-    # shell.generate_connection(
-    #     connection_type=ConnectionsTypes.SQL_SERVER,
-    #     username='',
-    #     password='Ssaabjoaudri@1996',
-    #     server='localhost',
-    #     database='my_database',
-    #     driver='ODBC Driver 17 for SQL Server',
-    # )
 
     shell.generate_connection(
         connection_type=ConnectionsTypes.MY_SQL,
@@ -44,10 +36,19 @@ def test_generate_connection(shell):
         numpy_address='test.npy'
     )
 
+    shell.generate_connection(
+        connection_name='my_pickle',
+        connection_type=ConnectionsTypes.PICKLE,
+        pickle_address='test.pickle'
+    )
+
     # shell.generate_connection(
-    #     connection_name='my_pickle',
-    #     connection_type=ConnectionsTypes.PICKLE,
-    #     pickle_address='test.pkl'
+    #     connection_type=ConnectionsTypes.SQL_SERVER,
+    #     username='',
+    #     password='Ssaabjoaudri@1996',
+    #     server='localhost',
+    #     database='my_database',
+    #     driver='ODBC Driver 17 for SQL Server',
     # )
 
 
@@ -94,35 +95,35 @@ def test_frame_data(shell, data_cache):
 
 
 def run_test():
-    print('> Generating AI shell ...')
     my_shell = AIShell(
         name='shell_01',
         log_events=True,
     )
 
-    # my_shell.set_telegram_logger(
-    #     chat_ids=['1', '2'],
-    #     mode=TelegramLogTypes.Telegram_Lite
-    # )
+    my_shell.set_telegram_logger(
+        chat_ids=['all'],
+        mode=TelegramLogTypes.Telegram_All
+    )
 
-    my_shell.set_python_logger()
+    my_shell.set_python_logger(levels=['sdf', 'sdf'])
 
     # connection generation
-    print('> Generating connection ...')
     test_generate_connection(my_shell)
 
     # get data
-    print('> Accessing data ...')
     data_cache = test_get_data(my_shell)
 
     # printing cached data
-    print('> Cached data:')
     for datum in data_cache:
         print(datum)
 
+    with open('test.pickle', 'wb') as f:
+        pickle.dump(data_cache, f)
+
     # framing data
-    print('> Framing data')
     framed_data = test_frame_data(my_shell, data_cache)
+
+    my_shell.flush_remainders()
 
     # calling it off
     print('done!')

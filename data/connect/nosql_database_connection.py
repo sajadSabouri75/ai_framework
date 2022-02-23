@@ -13,14 +13,14 @@ class NoSQLDatabaseConnection(Connection):
         super(NoSQLDatabaseConnection, self).check_on_construction_inputs()
         try:
             if self._password is None:
-                raise excepts.NoNoSQLPassword
+                raise excepts.NoNoSQLPassword(self._loggers)
             if self._port is None:
-                raise excepts.NoNoSQLPort
+                raise excepts.NoNoSQLPort(self._loggers)
             if self._host is None:
-                raise excepts.NoNoSQLHost
+                raise excepts.NoNoSQLHost(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
         except Exception as e:
-            excepts.VitalConnectionException().evoke(e)
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass

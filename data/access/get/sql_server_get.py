@@ -16,9 +16,10 @@ class SQLServerGet(Get):
     def apply_query(self, query):
         try:
             output = pd.read_sql(query, self._connection_obj)
-            ConsoleBroadcast.print_internal_message(f'query "{query}" is performed successfully!')
+            for logger in self._loggers:
+                logger.print_internal_message(f'query "{query}" is performed successfully!')
             if output.empty:
-                raise excepts.EmptyQueryResult
+                raise excepts.EmptyQueryResult(self._loggers)
 
         except excepts.EmptyQueryResult as e:
             e.evoke(query)
@@ -26,7 +27,7 @@ class SQLServerGet(Get):
         except excepts.GetException as e:
             e.evoke()
         except Exception as e:
-            excepts.VitalGetException.evoke(e)
+            excepts.VitalGetException(self._loggers).evoke(e)
 
         if not output.empty:
             return output

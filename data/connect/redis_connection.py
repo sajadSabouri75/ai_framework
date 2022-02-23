@@ -14,11 +14,11 @@ class RedisConnection(NoSQLDatabaseConnection):
         super(RedisConnection, self).check_on_construction_inputs()
         try:
             if self._db_index is None:
-                raise excepts.NoNoSQLDatabaseIndex
+                raise excepts.NoNoSQLDatabaseIndex(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
-        except:
-            excepts.VitalConnectionException().evoke()
+        except Exception as e:
+            excepts.VitalConnectionException(self._loggers).evoke(e)
 
     def build_connection(self):
         try:
@@ -31,13 +31,13 @@ class RedisConnection(NoSQLDatabaseConnection):
             e = self.check_initial_connection()
             raise e
         except redis.exceptions.ConnectionError as e:
-            excepts.NoSQLDBConnectionError().evoke(f'Redis error description: {e}')
+            excepts.NoSQLDBConnectionError(self._loggers).evoke(f'Redis error description: {e}')
         except excepts.ConnectionException as e:
             e.evoke()
         except base_excepts.NoException as e:
             e.evoke()
         except Exception as e:
-            excepts.VitalConnectionException().evoke(e)
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass
 
@@ -47,6 +47,7 @@ class RedisConnection(NoSQLDatabaseConnection):
         try:
             self._connection_obj.set('$name$', 'unknown')
             self._connection_obj.get('$name$')
-            return base_excepts.NoException
+            return base_excepts.NoException(self._loggers)
         except Exception as e:
-            return e
+            excepts.VitalConnectionException(self._loggers).evoke(e)
+

@@ -3,69 +3,79 @@ from helpers.logging.console_broadcast import ConsoleBroadcast
 
 
 class GetException(AIFrameworkExceptions):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error("Something went wrong with this get, don't know what!")
-        exit() # default behavior is vital error (no fault tolerance)
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error("Something went wrong with this get, don't know what!")
+            logger.flush()
+        exit()  # default behavior is vital error (zero fault tolerance)
 
 
 class TrivialGetException(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('Some trivial process went wrong!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('Some trivial process went wrong!')
 
 
 class VitalGetException(GetException):
-    @staticmethod
-    def evoke(message=''):
-        ConsoleBroadcast.print_error('Some vital process went wrong!')
-        if message != '':
-            ConsoleBroadcast.print_error(message)
+    def evoke(self, message=''):
+        for logger in self._loggers:
+            logger.print_error('Some vital process went wrong!')
+            if message != '':
+                logger.print_error(message)
+            logger.flush()
 
         exit()
 
 
 class NoIdentification(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No connection identification is defined! Please insert connection id or name!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No connection identification is defined! Please insert connection id or name!')
+            logger.flush()
         exit()
 
 
 class InvalidID(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Connection id is not found!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Connection id is not found!')
+            logger.flush()
         exit()
 
 
 class InvalidName(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Connection name is not found!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Connection name is not found!')
+            logger.flush()
         exit()
 
 
 class InvalidNameIDPair(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('Connection name and id do not pair!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('Connection name and id do not pair!')
+            logger.flush()
         exit()
 
 
 class RedundantCSVQuery(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_warning('CSV files do not accept queries. Query ignored!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_warning('CSV files do not accept queries. Query ignored!')
 
 
 class NoGetQuery(GetException):
-    @staticmethod
-    def evoke():
-        ConsoleBroadcast.print_error('No query is defined for data retrieval!')
+    def evoke(self):
+        for logger in self._loggers:
+            logger.print_error('No query is defined for data retrieval!')
+            logger.flush()
+        exit()
 
 
 class EmptyQueryResult(GetException):
-    @staticmethod
-    def evoke(query):
-        ConsoleBroadcast.print_warning(f'The specified query [{query}] resulted in empty result set!')
+    def evoke(self, query):
+        for logger in self._loggers:
+            logger.print_warning(f'The specified query [{query}] resulted in empty result set!')
+            logger.flush()
+        exit()

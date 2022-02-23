@@ -1,8 +1,8 @@
-import pandas.errors
 from data.connect.connections import Connection
 from helpers.exceptions import connections_exceptions as excepts
 import os
 import pandas as pd
+import pandas.errors
 
 
 class CSVConnection(Connection):
@@ -15,15 +15,15 @@ class CSVConnection(Connection):
         try:
             super(CSVConnection, self).check_on_construction_inputs()
             if self._csv_address is None:
-                raise excepts.NoCSVAddress
+                raise excepts.NoCSVAddress(self._loggers)
             if not self.check_csv_address():
-                raise excepts.WrongCSVAddress
+                raise excepts.WrongCSVAddress(self._loggers)
             if not self.check_csv_type():
-                raise excepts.NoCSVType
+                raise excepts.NoCSVType(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
-        except:
-            excepts.VitalConnectionException().evoke()
+        except Exception as e:
+            excepts.VitalConnectionException(self._loggers).evoke()
         finally:
             pass
 
@@ -38,9 +38,9 @@ class CSVConnection(Connection):
             self._connection_obj = self._csv_address
             pd.read_csv(self._csv_address)
         except pd.errors.EmptyDataError:
-            excepts.CSVEmpty().evoke()
+            excepts.CSVEmpty(self._loggers).evoke()
         except Exception as e:
-            excepts.VitalConnectionException().evoke(e)
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass
         super(CSVConnection, self).build_connection()

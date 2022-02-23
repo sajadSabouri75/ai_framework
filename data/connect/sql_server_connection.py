@@ -13,11 +13,11 @@ class SQLServerConnection(SQLDatabaseConnection):
         super(SQLServerConnection, self).check_on_construction_inputs()
         try:
             if self._driver is None:
-                raise excepts.NoMSSQLServerDriver
+                raise excepts.NoMSSQLServerDriver(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
         except:
-            excepts.VitalConnectionException().evoke()
+            excepts.VitalConnectionException(self._loggers).evoke()
 
     def build_connection(self):
         try:
@@ -30,9 +30,9 @@ class SQLServerConnection(SQLDatabaseConnection):
                 # autocommit=True -> I don't know what this does. Needs to be checked.
             )
         except pyodbc.Error as e:
-            excepts.RelationalDBConnectionError().evoke(f"Pyodbc error code: {e.args[0]} | error description: {e.args[1]}!")
-        except:
-            excepts.VitalConnectionException().evoke()
+            excepts.RelationalDBConnectionError(self._loggers).evoke(f"Pyodbc error code: {e.args[0]} | error description: {e.args[1]}!")
+        except Exception as e:
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass
 

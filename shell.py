@@ -1,10 +1,9 @@
-import pandas.core.frame
-
 from shell_helpers import TelegramLogTypes
 from data.access.frame.frame_helpers import ConversionTypes
 from helpers.generators.generators import Generator
 from helpers.logging.console_broadcast import ConsoleBroadcast
 from helpers.logging.telegram_bot_broadcast import TelegramBotBroadcast
+from helpers.logging.python_logging import PythonLogging
 from helpers.logging.null_broadcast import NullBroadcast
 from helpers.exceptions import connections_exceptions as connection_excepts
 from helpers.exceptions import get_exceptions as get_excepts
@@ -20,6 +19,8 @@ from data.access.get.redis_get import RedisGet
 from data.access.get.sql_server_get import SQLServerGet
 from data.access.get.mysql_get import MYSQLGet
 from data.access.frame.pandas_to_rdd_frame import PandasRDDFrame
+import pandas
+
 
 class AIShell:
     def __init__(self, **kwargs):
@@ -36,13 +37,21 @@ class AIShell:
         self._access_objs = []
         self._connection_to_access_dict = {}
 
+        for logger in self._loggers:
+            logger.define_framework()
+
     def set_telegram_logger(self, **kwargs):
         chat_ids = kwargs['chat_ids'] if 'chat_ids' in kwargs else None
         mode = kwargs['mode'] if 'mode' in kwargs else TelegramLogTypes.Telegram_Lite
         self._loggers.append(TelegramBotBroadcast(chat_ids=chat_ids, mode=mode))
 
-    def set_python_logger(self):
-        pass
+    def set_python_logger(self, **kwargs):
+        levels = kwargs['levels'] if 'levels' in kwargs else None
+        self._loggers.append(PythonLogging(levels=levels, loggers=self._loggers))
+
+    def flush_remainders(self):
+        for logger in self._loggers:
+            logger.flush()
 
     # Connection generation
     def generate_connection(self, **kwargs):
@@ -61,7 +70,8 @@ class AIShell:
                     connection_id=connection_id,
                     connection_type=connection_type,
                     connection_name=connection_name,
-                    csv_address=kwargs['csv_address'] if 'csv_address' in kwargs else None
+                    csv_address=kwargs['csv_address'] if 'csv_address' in kwargs else None,
+                    loggers=self._loggers,
                 )
             )
         elif connection_type is ConnectionsTypes.NUMPY:
@@ -70,7 +80,8 @@ class AIShell:
                     connection_id=connection_id,
                     connection_type=connection_type,
                     connection_name=connection_name,
-                    numpy_address=kwargs['numpy_address'] if 'numpy_address' in kwargs else None
+                    numpy_address=kwargs['numpy_address'] if 'numpy_address' in kwargs else None,
+                    loggers=self._loggers
                 )
             )
         elif connection_type is ConnectionsTypes.PICKLE:
@@ -79,7 +90,8 @@ class AIShell:
                     connection_id=connection_id,
                     connection_type=connection_type,
                     connection_name=connection_name,
-                    pickle_address=kwargs['pickle_address'] if 'pickle_address' in kwargs else None
+                    pickle_address=kwargs['pickle_address'] if 'pickle_address' in kwargs else None,
+                    loggers=self._loggers
                 )
             )
         elif connection_type is ConnectionsTypes.SQL_SERVER:
@@ -93,6 +105,7 @@ class AIShell:
                     server=kwargs['server'] if 'server' in kwargs else None,
                     database=kwargs['database'] if 'database' in kwargs else None,
                     driver=kwargs['driver'] if 'driver' in kwargs else None,
+                    loggers=self._loggers
                 )
             )
         elif connection_type is ConnectionsTypes.MY_SQL:
@@ -106,7 +119,8 @@ class AIShell:
                     server=kwargs['server'] if 'server' in kwargs else None,
                     database=kwargs['database'] if 'database' in kwargs else None,
                     driver=kwargs['driver'] if 'driver' in kwargs else None,
-                    port=kwargs['port'] if 'port' in kwargs else None
+                    port=kwargs['port'] if 'port' in kwargs else None,
+                    loggers=self._loggers
                 )
             )
         elif connection_type is ConnectionsTypes.REDIS:
@@ -118,7 +132,8 @@ class AIShell:
                     password=kwargs['password'] if 'password' in kwargs else None,
                     host=kwargs['host'] if 'host' in kwargs else None,
                     port=kwargs['port'] if 'port' in kwargs else None,
-                    db_index=kwargs['database_index'] if 'database_index' in kwargs else None
+                    db_index=kwargs['database_index'] if 'database_index' in kwargs else None,
+                    loggers=self._loggers
                 )
             )
         else:
@@ -143,13 +158,13 @@ class AIShell:
     def check_on_connection_generation_inputs(self, connection_type, connection_name):
         try:
             if connection_type is None:
-                raise connection_excepts.NoConnectionType
-            elif not connection_type in ConnectionsTypes:
-                raise connection_excepts.NoValidConnectionType
+                raise connection_excepts.NoConnectionType(self._loggers)
+            elif connection_type not in ConnectionsTypes:
+                raise connection_excepts.NoValidConnectionType(self._loggers)
             elif connection_name is None:
-                raise connection_excepts.NoConnectionName
+                raise connection_excepts.NoConnectionName(self._loggers)
             elif connection_name in self._connections_names:
-                raise connection_excepts.DuplicateConnectionName
+                raise connection_excepts.DuplicateConnectionName(self._loggers)
             else:
                 return connection_name
         except connection_excepts.NoConnectionName as e:
@@ -195,19 +210,31 @@ class AIShell:
             was_successful = True
             if connection_type == ConnectionsTypes.CSV:
                 self._access_objs.append(
-                    CSVGet(connection.get_connection_obj())
+                    CSVGet(
+                        connection_obj=connection.get_connection_obj(),
+                        loggers=self._loggers
+                    )
                 )
             elif connection_type == ConnectionsTypes.REDIS:
                 self._access_objs.append(
-                    RedisGet(connection.get_connection_obj())
+                    RedisGet(
+                        connection_obj=connection.get_connection_obj(),
+                        loggers=self._loggers
+                    )
                 )
             elif connection_type == ConnectionsTypes.SQL_SERVER:
                 self._access_objs.append(
-                    SQLServerGet(connection.get_connection_obj())
+                    SQLServerGet(
+                        connection_obj=connection.get_connection_obj(),
+                        loggers=self._loggers
+                    )
                 )
             elif connection_type == ConnectionsTypes.MY_SQL:
                 self._access_objs.append(
-                    MYSQLGet(connection.get_connection_obj())
+                    MYSQLGet(
+                        connection_obj=connection.get_connection_obj(),
+                        loggers=self._loggers
+                    )
                 )
             else:
                 was_successful = False
@@ -253,10 +280,10 @@ class AIShell:
     def check_query(self, get_query, connection_type):
         try:
             if connection_type is not ConnectionsTypes.CSV and get_query is None:
-                raise get_excepts.NoGetQuery()
+                raise get_excepts.NoGetQuery
             if connection_type is ConnectionsTypes.CSV and get_query is not None:
                 get_query = None
-                raise get_excepts.RedundantCSVQuery()
+                raise get_excepts.RedundantCSVQuery(self._loggers)
 
         except get_excepts.GetException as e:
             e.evoke()
@@ -265,12 +292,20 @@ class AIShell:
 
     # Framing data
     def frame_data(self, data, subject_type=ConversionTypes.Pandas_Dataframe):
+        for logger in self._loggers:
+            logger.define_frame('start')
+
         if isinstance(data, pandas.core.frame.DataFrame):
             convertor = PandasRDDFrame(
                 object_type=type(data),
                 subject_type=subject_type,
-                pandas=data
+                pandas=data,
+                loggers=self._loggers
             )
-            return convertor.frame()
 
+        framed_data = convertor.frame()
 
+        for logger in self._loggers:
+            logger.define_frame('end')
+
+        return framed_data

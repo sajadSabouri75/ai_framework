@@ -2,19 +2,21 @@ from helpers.logging.console_broadcast import ConsoleBroadcast
 
 
 class AIFrameworkExceptions(Exception):
+    def __init__(self, loggers):
+        self._loggers = loggers
     pass
 
 
 class NoException(Exception):
-    @staticmethod
-    def evoke():
+    def evoke(self):
         pass
 
 
 class VitalException(AIFrameworkExceptions):
-    @staticmethod
-    def evoke(message=''):
-        ConsoleBroadcast.print_error('Some vital process went wrong!')
-        if message != '':
-            ConsoleBroadcast.print_error(message)
+    def evoke(self, message=''):
+        for logger in self._loggers:
+            logger.print_error('Some vital process went wrong!')
+            if message != '':
+                logger.print_error(message)
+            logger.flush()
         exit()

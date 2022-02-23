@@ -19,11 +19,11 @@ class RedisGet(Get):
                 output = self._connection_obj.get(str(values))
                 ConsoleBroadcast.print_internal_message(f'value of {values} is accessed successfully!')
                 if output is None:
-                    raise excepts.EmptyQueryResult
+                    raise excepts.EmptyQueryResult(self._loggers)
             except excepts.EmptyQueryResult as e:
                 e.evoke(query)
             except Exception as e:
-                excepts.VitalGetException.evoke(e)
+                excepts.VitalGetException(self._loggers).evoke(e)
 
             if output is not None:
                 return output

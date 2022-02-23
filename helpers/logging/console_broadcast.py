@@ -1,7 +1,8 @@
 from colorama import Fore
+from helpers.logging.logger import Logger
 
 
-class ConsoleBroadcast:
+class ConsoleBroadcast(Logger):
 
     @staticmethod
     def define_framework():
@@ -24,7 +25,11 @@ class ConsoleBroadcast:
 
     @staticmethod
     def confirm_connection(connection_id, connection_name):
-        print(f'<confirmation> {Fore.LIGHTGREEN_EX}connection [{connection_id}:{connection_name}] confirmed!{Fore.RESET} </confirmation>')
+        print(
+            f'<connection_confirmation> '
+            f'{Fore.LIGHTGREEN_EX}connection [{connection_id}:{connection_name}] confirmed!{Fore.RESET} '
+            f'</connection_confirmation>'
+        )
 
     @staticmethod
     def print_internal_message(message):
@@ -44,6 +49,25 @@ class ConsoleBroadcast:
             f'{Fore.LIGHTGREEN_EX}data from connection [{connection_id}:{connection_name}] cached!{Fore.RESET} '
             f'</data_cache>'
         )
+
+    @staticmethod
+    def define_frame(tag):
+        if tag == 'start':
+            print(f'{Fore.BLUE}<frame>{Fore.RESET}')
+        elif tag == 'end':
+            print(f'{Fore.BLUE}</frame>{Fore.RESET}')
+
+    @staticmethod
+    def confirm_framing():
+        print(
+            f'<frame_confirmation> '
+            f'{Fore.LIGHTGREEN_EX}framed successfully!{Fore.RESET} '
+            f'</frame_confirmation>'
+        )
+
+    @staticmethod
+    def flush():
+        pass
 
 
 

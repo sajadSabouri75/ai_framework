@@ -14,16 +14,16 @@ class SQLDatabaseConnection(Connection):
         super(SQLDatabaseConnection, self).check_on_construction_inputs()
         try:
             if self._username is None:
-                raise excepts.NoRelationalDBUsername
+                raise excepts.NoRelationalDBUsername(self._loggers)
             if self._password is None:
-                raise excepts.NoRelationalDBPassword
+                raise excepts.NoRelationalDBPassword(self._loggers)
             if self._server is None:
-                raise excepts.NoRelationalDBServer
+                raise excepts.NoRelationalDBServer(self._loggers)
             if self._database is None:
-                raise excepts.NoRelationalDBDatabase
+                raise excepts.NoRelationalDBDatabase(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
         except Exception as e:
-            excepts.VitalConnectionException().evoke(e)
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass

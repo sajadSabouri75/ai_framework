@@ -14,11 +14,11 @@ class MYSQLConnection(SQLDatabaseConnection):
         try:
             pass
             if self._port is None:
-                raise excepts.NoRelationalDBPort
+                raise excepts.NoRelationalDBPort(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
         except:
-            excepts.VitalConnectionException().evoke()
+            excepts.VitalConnectionException(self._loggers).evoke()
 
     def build_connection(self):
         try:
@@ -31,9 +31,9 @@ class MYSQLConnection(SQLDatabaseConnection):
             )
 
         except mysql.connector.Error as e:
-            excepts.RelationalDBConnectionError().evoke(f"Pyodbc error code: {0} | error description: {e}!")
+            excepts.RelationalDBConnectionError(self._loggers).evoke(f"Pyodbc error code: {0} | error description: {e}!")
         except Exception as e:
-            excepts.VitalConnectionException().evoke(e)
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass
 

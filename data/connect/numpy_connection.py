@@ -14,15 +14,15 @@ class NumpyConnection(Connection):
         try:
             super(NumpyConnection, self).check_on_construction_inputs()
             if self._numpy_address is None:
-                raise excepts.NoNumpyAddress
+                raise excepts.NoNumpyAddress(self._loggers)
             if not self.check_numpy_address():
-                raise excepts.WrongNumpyAddress
+                raise excepts.WrongNumpyAddress(self._loggers)
             if not self.check_numpy_type():
-                raise excepts.NoNumpyType
+                raise excepts.NoNumpyType(self._loggers)
         except excepts.ConnectionException as e:
             e.evoke()
-        except:
-            excepts.VitalConnectionException().evoke()
+        except Exception as e:
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass
 
@@ -37,9 +37,9 @@ class NumpyConnection(Connection):
             self._connection_obj = self._numpy_address
             np.load(self._numpy_address)
         except np.errors.EmptyDataError:
-            excepts.NumpyEmpty().evoke()
+            excepts.NumpyEmpty.evoke(self._loggers)
         except Exception as e:
-            excepts.VitalConnectionException().evoke(e)
+            excepts.VitalConnectionException(self._loggers).evoke(e)
         finally:
             pass
         super(NumpyConnection, self).build_connection()
